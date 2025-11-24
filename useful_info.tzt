@@ -1,0 +1,133 @@
+#check if flask is installed on your machine
+python -m flask --version
+
+
+
+#create directory of choice (cd)
+mkdir penguine or flast-api
+
+#create own virtual environment (folder that holds your dependencies)
+python -m venv .venv
+
+#activate virtual environment in the command prompt terminal of your root project (install your flask dependencies here)
+.venv\Scripts\activate
+
+#run server
+python app.py or py app.py (entry point of your flask app)
+
+# INSTALL
+pip install Flask-Migrate (FOR DATABSE MIGRATIONS like that of Django)
+then run the commands below (but make sure you remove db.createall() in your "app.py" so the Alembic Migrations can work well):
+flask db init
+flask db migrate -m "create tables"
+flask db upgrade
+# (Optional) if you ever want to revert
+flask db downgrade
+
+
+
+pip install redis
+pip install "celery[redis]"
+
+#If Redis:
+#Install: choco install redis-64 (on Windows with Chocolatey)
+
+#Start Redis server in the directory: 
+C:\Program Files\Memurai>memurai.exe
+
+
+#RUN THIS CELERY WORKER IN YOUR ROOT FLASK PROJECT DIRECTORY WHILE REDIS BROKER IS RUNNING IN CMD AS WELL
+celery -A levi worker -l info  //for async task
+
+celery -A levi beat -l info  //for periodic task
+
+
+
+#That will generate a requirements.txt with everything you’ve installed (Django, Flask, djangorestframework, etc).
+pip freeze > requirements.txt
+
+#asap git commands
+git add requirements.txt
+git commit -m "Added socketio and uvicorn dependencies"
+git push
+
+
+
+
+#########################
+from database import db
+from datetime import datetime
+import bcrypt
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    is_verified = db.Column(db.Boolean, default=False)
+    otp = db.Column(db.String(60))
+    otp_expires = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+
+
+### One - To - One Relationship
+class Profile(db.Model):
+    __tablename__ = "profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), unique=True)
+    bio = db.Column(db.String(255))
+    phone = db.Column(db.String(20))
+
+    user = db.relationship("User", backref=db.backref("profile", uselist=False))
+
+
+### One - To - Many Relationship
+class Profile(db.Model):
+    __tablename__ = "profiles"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"),)
+    bio = db.Column(db.String(255))
+    phone = db.Column(db.String(20))
+
+    user = db.relationship("User", backref=db.backref("profile", uselist=True))
+
+
+### Many - To - Many Relationship
+you need an association table (a link table)
+
+example:
+
+user_group = db.Table(
+    "user_group",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.id"), primary_key=True),
+    db.Column("group_id", db.Integer, db.ForeignKey("groups.id"), primary_key=True),
+)
+
+class Group(db.Model):
+    __tablename__ = "groups"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+
+    users = db.relationship("User", secondary=user_group, backref="groups")
+
+
+
+⚡ Summary of Relationship Types
+| Relationship Type | Example Models | Rule                      | Backref Access                 |
+| ----------------- | -------------- | ------------------------- | ------------------------------ |
+| One-to-Many       | User → Bank    | One user has many banks   | `user.banks`, `bank.user`      |
+| One-to-One        | User → Profile | One user has one profile  | `user.profile`, `profile.user` |
+| Many-to-Many      | User ↔ Group   | Many users in many groups | `user.groups`, `group.users`   |
+
+
+💡 Summary of Migrations between Django and Flask
+
+| Feature       | Django                            | Flask                                       |
+| ------------- | --------------------------------- | ------------------------------------------- |
+| ORM           | Built-in (Django ORM)             | Optional (Flask-SQLAlchemy, SQLModel, etc.) |
+| Migrations    | Built-in (makemigrations/migrate) | Add-on (Flask-Migrate / Alembic)            |
+| Philosophy    | Convention over configuration     | Flexibility and minimalism                  |
+| Typical setup | Fully managed project             | You pick your stack                         |
