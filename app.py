@@ -115,4 +115,4 @@ app = create_app()
 
 # Local development entry point
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
