@@ -56,7 +56,11 @@ def create_app():
     )
     
     from routes.wallet_routes import GetUserWallet
-    from routes.merchant_transaction_route import GetMerchantCustomerTransactions
+    from routes.merchant_transaction_route import ( 
+       GetMerchantCustomerTransactions,
+       ResolveAccount,
+       WithdrawFunds,
+    )
     from routes.admin_transactions_route import GetAdminTransactions
     from routes.penguine_paystack_webhook import PenguinePaystackWebhook
     from routes.escrow_routes import (
@@ -94,15 +98,15 @@ def create_app():
 
     # -------- MERCHANT ROUTES --------
     api.add_resource(GetMerchantCustomerTransactions, "/transactions/merchant-customers")
+    api.add_resource(ResolveAccount, "/resolve-account/<string:account_number>/<string:bank_code>")
+    # -------- WITHDRAW TO BANK --------
+    api.add_resource(WithdrawFunds, "/withdraw")
 
     # -------- ADMIN ROUTES --------
     api.add_resource(GetAdminTransactions, "/transactions/admin")
 
     # -------- PAYSTACK WEBHOOK --------
     api.add_resource(PenguinePaystackWebhook, "/penguine/webhook")
-
-    # -------- WITHDRAW TO BANK --------
-    api.add_resource(WithdrawToBank, "/withdraw-funds")
 
     # -------- PUBLIC ENDPOINTS --------
     api.add_resource(GetEscrowCodeByReference, "/get-escrow-code/<string:api_key>/<string:reference>")

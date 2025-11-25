@@ -5,7 +5,7 @@ from models.bank import Bank
 from models.user import User
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
-from utils.paystack_transfer_functions import fetch_banks
+from utils.paystack_transfer_functions import fetch_banks, resolve_account
 
 
 
@@ -154,3 +154,5 @@ class DeleteBank(Resource):
         except SQLAlchemyError as e:
             db.session.rollback()
             return {"message": "Delete failed", "error": str(e)}, 500
+
+

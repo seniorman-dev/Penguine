@@ -196,35 +196,3 @@ class GetEscrowCodeByReference(Resource):
         
         
         
-#WITHDRAW TO BANK      
-class WithdrawToBank(Resource):
-    @jwt_required()
-    def post(self,):
-        
-        parser = reqparse.RequestParser()
-        parser.add_argument("amount", required=True)
-        parser.add_argument("recipient_code", required=True,)
-        parser.add_argument("reference", required=True)
-        parser.add_argument("reason", required=True)
-        
-        
-        data: dict = parser.parse_args()
-        
-        try:
-            # ✅ Atomic transaction
-            with db.session.begin():
-                email = get_jwt_identity()
-                user = User.query.filter_by(email=email).first()
-                if not user:
-                    return {"message": "User not found"}, 404
-                
-                send_funds(
-                    amount=int(data["amount"]),
-                    recipient_code=data["recipient_code"],
-                    reference=data["reference"],
-                    reason=data["reason"]
-                )
-                #save to user transaction history (coming soon)
-        except SQLAlchemyError as e:
-            db.session.rollback()
-            return {"message": "Failed to process withdrawal", "error": str(e)}, 500
