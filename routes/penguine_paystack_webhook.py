@@ -84,22 +84,22 @@ class PenguinePaystackWebhook(Resource):
         paystack_signature = request.headers.get("x-paystack-signature")
         payload = request.get_data()  # raw bytes
 
-        # 1️⃣ Check if signature exists
+        # Check if signature exists
         if paystack_signature is None:
             return {"message": "Missing Paystack signature"}, 400
 
-        # 2️⃣ Compute HMAC signature
+        # 2Compute HMAC signature
         computed_signature = hmac.new(
             key=PAYSTACK_SECRET_KEY.encode("utf-8"),
             msg=payload,
             digestmod=hashlib.sha512
         ).hexdigest()
 
-        # 3️⃣ Compare signatures safely
+        # Compare signatures safely
         if not hmac.compare_digest(computed_signature, paystack_signature):
             return {"message": "Invalid signature"}, 400
 
-        # 4️⃣ Parse JSON payload
+        # Parse JSON payload
         event = request.get_json(force=True) or {}
         event_type = event.get("event")
         data: dict = event.get("data", {})
@@ -110,15 +110,15 @@ class PenguinePaystackWebhook(Resource):
         created_at = data.get("createdAt")
         status = data.get("status")
         amount = data.get("amount")
-        recipient = data.get("recipient", {})
+        recipient: dict = data.get("recipient", {})
         customer_email = recipient.get("email")
         #----------------Info------------------#
 
-        # 5️⃣ Check essential fields before DB operations
+        # Check essential fields before DB operations
         if not all([reference, amount, customer_email]):
             return {"message": "Missing required transaction data"}, 400
 
-        # 6️⃣ Handle events
+        # Handle events
         customer_transaction = MerchantTransaction.query.filter_by(
             amount=amount,
             reference=reference,
