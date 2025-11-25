@@ -67,7 +67,6 @@ def create_app():
         GetEscrowCodeByReference,
         ApplyEscrowCode,
         StartEscrowTransaction,
-        WithdrawToBank
     )
 
     # -------- AUTH ROUTES --------
