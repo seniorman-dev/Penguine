@@ -5,6 +5,8 @@ from models.bank import Bank
 from models.user import User
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from utils.paystack_transfer_functions import fetch_banks
+
 
 
 
@@ -82,6 +84,14 @@ class GetBanks(Resource):
         ]
 
         return {"count": len(banks), "banks": banks}, 200
+    
+    
+class GetPaystackBanks(Resource):
+    def get(self):
+        result: dict = fetch_banks()
+        if result.get("status"):
+            return result, 200
+        return result, 400
 
 
 class UpdateBank(Resource):

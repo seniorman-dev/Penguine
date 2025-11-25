@@ -52,6 +52,7 @@ def create_app():
         GetBanks, 
         UpdateBank, 
         DeleteBank,
+        GetPaystackBanks
     )
     
     from routes.wallet_routes import GetUserWallet
@@ -86,6 +87,7 @@ def create_app():
     api.add_resource(GetBanks, "/banks")
     api.add_resource(UpdateBank, "/banks/update/<uuid:bank_id>")
     api.add_resource(DeleteBank, "/banks/delete/<uuid:bank_id>")
+    api.add_resource(GetPaystackBanks, "/paystack/banks")
 
     # -------- WALLET ROUTE --------
     api.add_resource(GetUserWallet, "/wallet")
