@@ -17,7 +17,7 @@
 from flask import Flask
 from flask_restful import Api
 from config import Config
-from extensions import db, jwt, mail, migrate   # includes migrate
+from extensions import db, jwt, mail, migrate
 
 
 def create_app():
@@ -43,6 +43,8 @@ def create_app():
         GetUserById, 
         UpdateUser, 
         DeleteUser,
+        ChangeUserPassword   # includes migrate
+
     )
 
     from routes.bank_routes import (
@@ -77,6 +79,7 @@ def create_app():
     api.add_resource(GetUserById, "/users/<uuid:user_id>")
     api.add_resource(UpdateUser, "/users/update/<uuid:user_id>")
     api.add_resource(DeleteUser, "/users/delete/<uuid:user_id>")
+    api.add_resource(ChangeUserPassword, "/users/change-password")
 
     # -------- USER BANK ROUTES --------
     api.add_resource(AddBank, "/banks/add")
