@@ -195,4 +195,45 @@ class GetEscrowCodeByReference(Resource):
             return {"message": "Failed to fetch escrow code via transaction reference", "error": str(e)}, 500
         
         
+#PUBLIC ENDPOINT       
+# ---------------- Get Transaction and Trigeer Dispute ----------------
+class TriggerDispute(Resource):
+    
+    def post(self,):
+        parser = reqparse.RequestParser()
+        parser.add_argument("api_key", required=True)
+        parser.add_argument("escrow_code", required=True,)
+        parser.add_argument("reason", required=True,)
         
+        data: dict = parser.parse_args()
+        try:
+            # ✅ Atomic transaction
+            with db.session.begin():
+                #1. check if the merchant with the provided API Key exists
+                user = User.query.filter_by(api_key=data["api_key"]).first()
+                if not user:
+                    return {"message": "Merchant not found"}, 404
+                
+                #2. fetch the transaction that fulfills the query or filter conditions
+                transaction = MerchantTransaction.query.filter_by(
+                    user=user,
+                    user_id=user.id,
+                    escrow_code=data["escrow_code"]
+                ).first()
+                
+                #3. check if the transaction exists
+                if not transaction:
+                    return {"message": "Transaction not found"}, 404
+                
+                transaction.status = "in-dispute"
+                
+                #update the transaction with reason ""
+                
+                #send email to the merchant and the customer
+                
+                db.session.commit()
+                
+                return {"message": "Transaction set to 'in-dispute' successfullyy", "status": transaction.status, "escrow_code": transaction.escrow_code}, 200
+        except SQLAlchemyError as e:
+            db.session.rollback()
+            return {"message": "Failed to trigger dispute", "error": str(e)}, 500

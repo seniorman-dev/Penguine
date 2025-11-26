@@ -67,6 +67,7 @@ def create_app():
         GetEscrowCodeByReference,
         ApplyEscrowCode,
         StartEscrowTransaction,
+        TriggerDispute,
     )
 
     # -------- AUTH ROUTES --------
@@ -111,6 +112,7 @@ def create_app():
     api.add_resource(GetEscrowCodeByReference, "/get-escrow-code/<string:api_key>/<string:reference>")
     api.add_resource(ApplyEscrowCode, "/apply-escrow-code")
     api.add_resource(StartEscrowTransaction, "/start-escrow-transaction")
+    api.add_resource(TriggerDispute, "/trigger-dispute")
 
     return app
 
