@@ -38,7 +38,7 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
     
     
 
-def resend_email(sender: str, recipient: str, subject: str,  content: str):
+def resend_email(sender: str, recipient: str, subject: str,  content: str) -> dict:
     resend.api_key = "re_V1JL4n8X_9eunmFXeKLwpBjLrX4iJ2K2t"
 
     r = resend.Emails.send({
