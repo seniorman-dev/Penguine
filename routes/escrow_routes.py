@@ -247,8 +247,7 @@ class TriggerDispute(Resource):
                     content=f"Hi {transaction.customer_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, {transaction.merchant_name}  will follow up on the dispute resolution of this transaction to ensure proper settlement of dispute"
                 )
                 
-                
-                return {"message": "Transaction set to 'in-dispute' successfullyy", "status": transaction.status, "escrow_code": transaction.escrow_code}, 200
+                return {"message": "Transaction set to 'in-dispute' successfullyy", "status": transaction.status, "escrow_code": transaction.escrow_code, "reason":  transaction.dispute_reason}, 200
         except SQLAlchemyError as e:
             db.session.rollback()
             return {"message": "Failed to trigger dispute", "error": str(e)}, 500
