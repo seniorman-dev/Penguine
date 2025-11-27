@@ -1,3 +1,4 @@
+import os
 from flask_restful import Resource, reqparse, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from extensions import db
@@ -234,14 +235,14 @@ class TriggerDispute(Resource):
                 #send email to the merchant and the customer
                 #merchant
                 resend_email(
-                    sender="noreply@penguine.ng",
+                    sender=f"{os.getenv("DEFAULT_FROM_EMAIL")}",
                     recipient=transaction.merchant_email,
                     subject="Transaction Dispute Activated",
                     content=f"Hi {transaction.merchant_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, you need to follow up on the dispute resolution of this transaction in your dashboard"
                 )
                 #customer
                 resend_email(
-                    sender="noreply@penguine.ng",
+                    sender=f"{os.getenv("DEFAULT_FROM_EMAIL")}",
                     recipient=transaction.customer_email,
                     subject="Transaction Dispute Activated",
                     content=f"Hi {transaction.customer_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, {transaction.merchant_name}  will follow up on the dispute resolution of this transaction to ensure proper settlement of dispute"
