@@ -3,12 +3,12 @@ import os
 from flask_restful import Resource, reqparse
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime, timezone
-from extensions import db  # ✅ use db from extensions
+from extensions import db  # use db from extensions
 from models.user import User
 from models.wallet import Wallet
 from utils.api_key import generate_api_key
 from utils.otp_service import generate_otp, otp_expiry_time
-from utils.email_service import async_send_email
+from utils.email_service import async_send_email, resend_email
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -65,7 +65,7 @@ class Register(Resource):
                 
                 # Only send email *after* successful commit
                 # Send OTP email after successful commit
-                async_send_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email, otp=otp)
+                resend_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email, otp=otp)
 
                 return {
                    "access_token": token,
@@ -100,7 +100,7 @@ class VerifyOTP(Resource):
 
         return {"message": "Email verified successfully"}, 200
 
-# ---------------- Login ----------------
+# ---------------- Login -----------------
 class Login(Resource):
     def post(self):
         parser = reqparse.RequestParser()
@@ -137,7 +137,7 @@ class ForgotPassword(Resource):
         user.otp_expires = otp_expiry_time()
         db.session.commit()
 
-        async_send_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email, otp=otp) #"EMAIL_HOST_USER"
+        resend_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email, otp=otp) #"EMAIL_HOST_USER"
         return {"message": "OTP sent to your email for password reset"}, 200
 
 # ---------------- Reset Password ----------------

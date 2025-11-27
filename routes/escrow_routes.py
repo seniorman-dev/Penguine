@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from models.user import User
 from models.wallet import Wallet
 from utils.checkout_url import generate_paystack_checkout_link
-from utils.email_service import async_send_global_email
+from utils.email_service import async_send_global_email, resend_email
 from utils.paystack_transfer_functions import send_funds
 
 
@@ -28,7 +28,7 @@ class ApplyEscrowCode(Resource):
         data: dict = parser.parse_args()
         
         try:
-            # ✅ Atomic transaction
+            # Atomic transaction
             with db.session.begin():
                 
                 #1. check if the merchant with the provided API Key exists
@@ -66,7 +66,7 @@ class ApplyEscrowCode(Resource):
                 #save to db
                 db.session.commit()
             
-            # ✅ Only send email *after* successful commit
+            # Only send email *after* successful commit
             async_send_global_email(
                 sender="noreply@penguine.ng",
                 recipient=user.email, #transaction.merchant_email
@@ -171,7 +171,7 @@ class GetEscrowCodeByReference(Resource):
     
     def get(self, reference: str, api_key: str):
         try:
-            # ✅ Atomic transaction
+            # Atomic transaction
             with db.session.begin():
                 #1. check if the merchant with the provided API Key exists
                 user = User.query.filter_by(api_key=api_key).first()
@@ -233,14 +233,14 @@ class TriggerDispute(Resource):
                 
                 #send email to the merchant and the customer
                 #merchant
-                async_send_global_email(
+                resend_email(
                     sender="noreply@penguine.ng",
                     recipient=transaction.merchant_email,
                     subject="Transaction Dispute Activated",
                     content=f"Hi {transaction.merchant_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, you need to follow up on the dispute resolution of this transaction in your dashboard"
                 )
                 #customer
-                async_send_global_email(
+                resend_email(
                     sender="noreply@penguine.ng",
                     recipient=transaction.customer_email,
                     subject="Transaction Dispute Activated",

@@ -3,7 +3,7 @@ from flask_mail import Message
 from extensions import mail  
 import threading
 from flask import copy_current_request_context
-
+import resend
 
 
 
@@ -35,3 +35,16 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
 
     thread = threading.Thread(target=_send)
     thread.start()
+    
+    
+
+def resend_email(sender: str, recipient: str, subject: str,  content: str):
+    resend.api_key = "re_V1JL4n8X_9eunmFXeKLwpBjLrX4iJ2K2t"
+
+    r = resend.Emails.send({
+        "from": sender, #"onboarding@resend.dev",
+        "to": recipient, #"japhetebelechukwu@gmail.com",
+        "subject": subject, #"Hello World",
+        "html": content, #"<p>Congrats on sending your <strong>first email</strong>!</p>"
+    })
+    print(f"response values {r.values()}")

@@ -184,5 +184,5 @@ class PenguinePaystackWebhook(Resource):
         else:
             print(f"Unhandled event type: {event_type}")
 
-        # 7️⃣ Always acknowledge Paystack immediately
+        # Always acknowledge Paystack immediately
         return {"status": "success"}, 200
