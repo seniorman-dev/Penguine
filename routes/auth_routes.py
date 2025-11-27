@@ -63,7 +63,7 @@ class Register(Resource):
 
                 token = create_access_token(identity=user.email)
                 
-                # ✅ Only send email *after* successful commit
+                # Only send email *after* successful commit
                 # Send OTP email after successful commit
                 async_send_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email, otp=otp)
 

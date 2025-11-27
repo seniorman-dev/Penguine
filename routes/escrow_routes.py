@@ -114,7 +114,7 @@ class StartEscrowTransaction(Resource):
         
         
         try:
-            # ✅ Atomic transaction
+            # Atomic transaction
             with db.session.begin():
                 #1. check if the merchant with the provided API Key exists
                 user = User.query.filter_by(api_key=data["api_key"]).first()
@@ -207,7 +207,7 @@ class TriggerDispute(Resource):
         
         data: dict = parser.parse_args()
         try:
-            # ✅ Atomic transaction
+            # Atomic transaction
             with db.session.begin():
                 #1. check if the merchant with the provided API Key exists
                 user = User.query.filter_by(api_key=data["api_key"]).first()
@@ -228,10 +228,25 @@ class TriggerDispute(Resource):
                 transaction.status = "in-dispute"
                 
                 #update the transaction with reason ""
+                transaction.dispute_reason = data["reason"]
+                db.session.commit()
                 
                 #send email to the merchant and the customer
+                #merchant
+                async_send_global_email(
+                    sender="noreply@penguine.ng",
+                    recipient=transaction.merchant_email,
+                    subject="Transaction Dispute Activated",
+                    content=f"Hi {transaction.merchant_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, you need to follow up on the dispute resolution of this transaction in your dashboard"
+                )
+                #customer
+                async_send_global_email(
+                    sender="noreply@penguine.ng",
+                    recipient=transaction.customer_email,
+                    subject="Transaction Dispute Activated",
+                    content=f"Hi {transaction.customer_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, {transaction.merchant_name}  will follow up on the dispute resolution of this transaction to ensure proper settlement of dispute"
+                )
                 
-                db.session.commit()
                 
                 return {"message": "Transaction set to 'in-dispute' successfullyy", "status": transaction.status, "escrow_code": transaction.escrow_code}, 200
         except SQLAlchemyError as e:

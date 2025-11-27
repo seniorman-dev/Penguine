@@ -38,6 +38,9 @@ class MerchantTransaction(db.Model):
     customer_email = Column(String(150), nullable=False)
     webhook_url = Column(String(250), nullable=False)
     platform = Column(String(250), nullable=False)  #e.g TheBroomApp, Aizen, Penguine, Pika, Kuda
+    
+    dispute_reason = Column(String(500), nullable=True,) ##
+    
     settlement_account = Column(JSON(), nullable=False)
     
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
