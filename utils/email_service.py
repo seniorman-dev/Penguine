@@ -45,6 +45,6 @@ def resend_email(sender: str, recipient: str, subject: str,  content: str):
         "from": sender, #"onboarding@resend.dev",
         "to": recipient, #"japhetebelechukwu@gmail.com",
         "subject": subject, #"Hello World",
-        "html": content, #"<p>Congrats on sending your <strong>first email</strong>!</p>"
+        "html": f"<p>{content}</p>", #"<p>Congrats on sending your <strong>first email</strong>!</p>"
     })
     print(f"response values {r.values()}")
