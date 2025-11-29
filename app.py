@@ -14,6 +14,7 @@
    Everything stays in a single file, but with proper order of initialization.
 '''
 
+import os
 from flask import Flask
 from flask_restful import Api
 from config import Config
@@ -125,4 +126,6 @@ app = create_app()
 
 # Local development entry point
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+    #app.run(debug=True)
