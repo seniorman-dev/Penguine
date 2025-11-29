@@ -39,7 +39,7 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
     
     
 
-def brevo_mail(sender: str, recipient: str, subject: str,  content: str) -> dict:
+def brevo_mail(sender: str, recipient: str, subject: str,  content: str) -> str:
     '''msg = Message(
         subject='Test from Flask + Brevo',
         recipients=['recipient@example.com'],
@@ -50,6 +50,8 @@ def brevo_mail(sender: str, recipient: str, subject: str,  content: str) -> dict
     
     try:
         mail.send(msg)
+        print('Email sent successfully!')
         return 'Email sent successfully!'
     except Exception as e:
-        return f'Error sending mail with Brevo: {str(e)}'#
+        print('Error sending mail with Brevo: {str(e)}')
+        return f'Error sending mail with Brevo: {str(e)}'
