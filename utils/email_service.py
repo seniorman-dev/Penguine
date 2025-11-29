@@ -27,6 +27,9 @@ def async_send_otp_email(sender: str, recipient: str, otp: str):
 def send_email(sender: str, recipient: str, subject: str,  content: str):
     msg = Message(subject=subject, body=content, recipients=[recipient],sender=sender)
     mail.send(msg)
+    
+    
+    
 
 def async_send_global_email(sender: str, recipient: str, subject: str,  content: str):
     @copy_current_request_context
@@ -40,11 +43,6 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
     
 
 def brevo_mail(sender: str, recipient: str, subject: str,  content: str) -> str:
-    '''msg = Message(
-        subject='Test from Flask + Brevo',
-        recipients=['recipient@example.com'],
-        body='Hello! This email is sent via Brevo SMTP.'
-    )'''
     
     msg = Message(subject=subject, body=content, recipients=[recipient],sender=sender)
     
