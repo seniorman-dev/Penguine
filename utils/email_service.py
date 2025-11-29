@@ -13,7 +13,7 @@ def send_otp_email(sender: str, recipient: str, otp: str):
     msg.body = f"Your OTP is {otp}.\nIt expires in 10 minutes."
     mail.send(msg)
 
-def async_send_email(sender: str, recipient: str, otp: str):
+def async_send_otp_email(sender: str, recipient: str, otp: str):
     @copy_current_request_context
     def _send():
         send_otp_email(sender=sender, recipient=recipient, otp=otp)

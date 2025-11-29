@@ -8,7 +8,7 @@ from models.user import User
 from models.wallet import Wallet
 from utils.api_key import generate_api_key
 from utils.otp_service import generate_otp, otp_expiry_time
-from utils.email_service import async_send_email, resend_email
+from utils.email_service import async_send_global_email, resend_email
 from sqlalchemy.exc import SQLAlchemyError
 
 
@@ -65,7 +65,7 @@ class Register(Resource):
                 
                 # Only send email *after* successful commit
                 # Send OTP email after successful commit
-                resend_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Verification Code", content=f"Your OTP is {otp}.\nIt expires in 10 minutes.")
+                async_send_global_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Verification Code", content=f"Your OTP is {otp}.\nIt expires in 10 minutes.")
 
                 return {
                    "access_token": token,
@@ -137,7 +137,7 @@ class ForgotPassword(Resource):
         user.otp_expires = otp_expiry_time()
         db.session.commit()
 
-        resend_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Verification Code", content=f"Your OTP is {otp}.\nIt expires in 10 minutes.")
+        async_send_global_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Verification Code", content=f"Your OTP is {otp}.\nIt expires in 10 minutes.")
         return {"message": "OTP sent to your email for password reset"}, 200
 
 # ---------------- Reset Password ----------------
@@ -175,5 +175,5 @@ class DeleteAccount(Resource):
 
         db.session.delete(instance=user)
         db.session.commit()
-        resend_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Account Has Been Deleted", content=f"Hi {user.full_name}, you ochestrated the deletion of your account and as such, your details has been wiped off completely from our system.")
+        async_send_global_email(sender=os.getenv("DEFAULT_FROM_EMAIL"), recipient=user.email,subject="Your Account Has Been Deleted", content=f"Hi {user.full_name}, you ochestrated the deletion of your account and as such, your details has been wiped off completely from our system.")
         return {"message": "Account deleted successfully"}, 200

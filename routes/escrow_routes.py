@@ -234,14 +234,14 @@ class TriggerDispute(Resource):
                 
                 #send email to the merchant and the customer
                 #merchant
-                resend_email(
+                async_send_global_email(
                     sender=f"{os.getenv("DEFAULT_FROM_EMAIL")}",
                     recipient=transaction.merchant_email,
                     subject="Transaction Dispute Activated",
                     content=f"Hi {transaction.merchant_name}, a transaction with the id: {transaction.id} and escrow_code: {transaction.escrow_code} just activated dispute.\nNext up, you need to follow up on the dispute resolution of this transaction in your dashboard"
                 )
                 #customer
-                resend_email(
+                async_send_global_email(
                     sender=f"{os.getenv("DEFAULT_FROM_EMAIL")}",
                     recipient=transaction.customer_email,
                     subject="Transaction Dispute Activated",
