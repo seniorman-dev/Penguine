@@ -65,7 +65,7 @@ def send_brevo_email(recipient: str, subject: str, content: str, sender: str, se
     url = "https://api.brevo.com/v3/emailCampaigns"
     
     headers = {
-        "api-key": "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",
+        "api-key": "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", #os.getenv("BREVO_API_KEY")
         "content-type": "application/json"
     }
     
