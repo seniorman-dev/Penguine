@@ -33,3 +33,13 @@ class Config:
     MAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() in ("true", "1", "yes")
     MAIL_USERNAME = os.getenv("EMAIL_HOST_USER")
     MAIL_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+    
+    # Brevo SMTP Configuration
+    BREVO_MAIL_SERVER = os.environ.get('BREVO_MAIL_SERVER')
+    BREVO_PORT = int(os.environ.get('BREVO_PORT', 465))
+    BREVO_USE_TLS = os.environ.get('BREVO_USE_TLS')
+    BREVO_SMTP_LOGIN = os.environ.get('BREVO_SMTP_LOGIN')
+    BREVO_SMTP_KEY = os.environ.get('BREVO_SMTP_KEY')
+    MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+    
+    
