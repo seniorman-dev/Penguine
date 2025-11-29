@@ -31,7 +31,8 @@ def send_email(sender: str, recipient: str, subject: str,  content: str):
 def async_send_global_email(sender: str, recipient: str, subject: str,  content: str):
     @copy_current_request_context
     def _send():
-        send_email(sender=sender, recipient=recipient, subject=subject, content=content)
+        brevo_mail(sender=sender, recipient=recipient, subject=subject, content=content)
+        #send_email(sender=sender, recipient=recipient, subject=subject, content=content)
 
     thread = threading.Thread(target=_send)
     thread.start()
