@@ -53,5 +53,5 @@ def brevo_mail(sender: str, recipient: str, subject: str,  content: str) -> str:
         print('Email sent successfully!')
         return 'Email sent successfully!'
     except Exception as e:
-        print('Error sending mail with Brevo: {str(e)}')
+        print(f'Error sending mail with Brevo: {str(e)}')
         return f'Error sending mail with Brevo: {str(e)}'
