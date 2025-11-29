@@ -59,7 +59,7 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
 
 
 
-def send_brevo_email(recipient: str, subject: str, content: str, sender: str, sender_name: str = "Your App"):
+def send_brevo_email(recipient: str, subject: str, content: str, sender: str, sender_name: str = "SenderXX"):
     """Send email via Brevo API"""
     
     url = "https://api.brevo.com/v3/emailCampaigns"
