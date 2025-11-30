@@ -7,6 +7,11 @@ from flask import copy_current_request_context
 import requests
 import os
 
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
+
 
 
 def send_otp_email(sender: str, recipient: str, otp: str):
@@ -59,13 +64,17 @@ def async_send_global_email(sender: str, recipient: str, subject: str,  content:
 
 
 
+
+
 def send_brevo_email(recipient: str, subject: str, content: str, sender: str, sender_name: str = "SenderXX"):
     """Send email via Brevo API"""
     
-    url = "https://api.brevo.com/v3/emailCampaigns"
+    #url = "https://api.brevo.com/v3/emailCampaigns"
+    # CORRECT ENDPOINT FOR TRANSACTIONAL EMAILS
+    url = "https://api.brevo.com/v3/smtp/email"
     
     headers = {
-        "api-key": f"{os.getenv("BREVO_API_KEY")}",
+        "api-key": f"{os.getenv("BREVO_API_KEY", "nil")}",
         "content-type": "application/json"
     }
     
@@ -73,6 +82,7 @@ def send_brevo_email(recipient: str, subject: str, content: str, sender: str, se
         "sender": {"name": sender_name, "email": sender},
         "to": [{"email": recipient}],
         "subject": subject,
+        #"name": content,
         "htmlContent": content
     }
     

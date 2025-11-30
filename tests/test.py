@@ -9,6 +9,10 @@
 #COLLISION  -> sln (Separate chaining using linked lists or By using Linear probing) to set items and then to look up items
 
 
+import os
+import requests
+
+
 class HashTableByChaining:
     
     #constructor
@@ -63,7 +67,7 @@ class HashTableByChaining:
         return False
         
 
-table = HashTableByChaining()
+'''table = HashTableByChaining()
 table.setitem("john", 1000)
 table.setitem("jane", 1300)
 res = table.getitem("jane")    # collision: both keys map to same index
@@ -71,4 +75,36 @@ table.setitem("jane", 16766)
 res2 = table.getitem("jane")
 print(res) # -> 200 (overwritten), wrong if we wanted both
 print(res2)
-print(table.buckets)
+print(table.buckets)'''
+
+
+def send_brevo_email(recipient: str, subject: str, content: str, sender: str, sender_name: str = "SenderXX"):
+    """Send email via Brevo API"""
+    
+    #url = "https://api.brevo.com/v3/emailCampaigns"
+    # CORRECT ENDPOINT FOR TRANSACTIONAL EMAILS
+    url = "https://api.brevo.com/v3/smtp/email"
+    
+    headers = {
+        "api-key": "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",  #f"{os.getenv("BREVO_API_KEY")}",
+        "content-type": "application/json"
+    }
+    
+    payload = {
+        "sender": {"name": sender_name, "email": sender},
+        "to": [{"email": recipient}],
+        "subject": subject,
+        #"name": content,
+        "htmlContent": content
+    }
+    
+    response = requests.post(url, json=payload, headers=headers)
+    
+    if response.status_code == 201:
+        print(f"Email sent!: {response.json()}")  #response.json().get('messageId')
+        return True
+    else:
+        print(f"Error: {response.json()}")
+        return False
+
+print(f"{send_brevo_email(recipient="coder.jay2001@gmail.com", subject="Hello Cacus!", content="fjfjhacjhcshcj", sender="japhetebelechukwu@gmail.com", sender_name="Japhet Alvin")}")
